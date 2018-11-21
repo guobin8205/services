@@ -32,4 +32,3 @@ services:
     links:
       - zookeeper
     container_name: kafka
-  
