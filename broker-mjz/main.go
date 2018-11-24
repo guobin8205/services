@@ -11,6 +11,7 @@ import (
 	"github.com/micro/go-micro/broker"
 	"github.com/micro/go-micro/cmd"
 	_ "github.com/micro/go-plugins/broker/kafka"
+	_ "github.com/micro/go-plugins/registry/nats"
 	"time"
 )
 
@@ -20,7 +21,7 @@ func sendEv(topic string, p micro.Publisher) {
 	for _ = range t.C {
 		// create new event
 		ev := &example.Message{
-			Say: fmt.Sprintf("Messaging you all day on %s", topic),
+			Say: fmt.Sprintf("Messaging you all day on %s,%v", topic, time.Now().String()),
 		}
 
 		log.Logf("publishing %+v\n", ev)
@@ -29,6 +30,7 @@ func sendEv(topic string, p micro.Publisher) {
 		if err := p.Publish(context.Background(), ev); err != nil {
 			log.Logf("error publishing %v", err)
 		}
+		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -51,8 +53,9 @@ func main() {
 	// Register Function as Subscriber
 	//micro.RegisterSubscriber("testtopic", service.Server(), subscriber.Handler)
 
-	publisher := micro.NewPublisher("topic_mjz", service.Client())
-	go sendEv("topic_mjz", publisher)
+	//publisher := micro.NewPublisher("topic_mjz", service.Client())
+	//go sendEv("topic_mjz", publisher)
+
 	//go sub()
 	//var BrokerURLs = []string{
 	//	0: "192.168.3.23:9092",
