@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/guobin8205/services/broker-mjz/handler"
 	example "github.com/guobin8205/services/broker-mjz/proto/example"
-	"github.com/guobin8205/services/broker-mjz/subscriber"
 	"github.com/micro/go-log"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/broker"
@@ -30,7 +29,7 @@ func sendEv(topic string, p micro.Publisher) {
 		if err := p.Publish(context.Background(), ev); err != nil {
 			log.Logf("error publishing %v", err)
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -48,13 +47,13 @@ func main() {
 	example.RegisterExampleHandler(service.Server(), new(handler.Example))
 
 	// Register Struct as Subscriber
-	micro.RegisterSubscriber("topic_mjz", service.Server(), new(subscriber.Example))
+	//micro.RegisterSubscriber("topic_mjz", service.Server(), new(subscriber.Example))
 
 	// Register Function as Subscriber
 	//micro.RegisterSubscriber("testtopic", service.Server(), subscriber.Handler)
 
-	//publisher := micro.NewPublisher("topic_mjz", service.Client())
-	//go sendEv("topic_mjz", publisher)
+	publisher := micro.NewPublisher("go.micro.srv.broker-mjz", service.Client())
+	go sendEv("go.micro.srv.broker-mjz", publisher)
 
 	//go sub()
 	//var BrokerURLs = []string{
